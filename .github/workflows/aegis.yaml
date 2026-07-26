@@ -1,9 +1,12 @@
 name: 🛡️ Aegis Pipeline
 
 on:
-  push:
-    branches:
-      - main
+  # *WARNING*: Trigger automatically disabled for this demo repository.
+  # Uncomment the lines below to enable it on a real repository.
+  # push:
+  #   branches:
+  #     - main
+  workflow_dispatch:
 
 permissions:
   contents: read
