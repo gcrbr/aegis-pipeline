@@ -1,0 +1,41 @@
+---
+# 0. Default Deny Policy
+# Questa policy seleziona tutti i pod nel namespace e blocca
+# di default qualsiasi traffico in ingresso e in uscita non esplicitamente autorizzato.
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: default-deny
+  namespace: development
+spec:
+  endpointSelector:
+    matchLabels: {} # Seleziona tutti i pod
+  ingress: [] # Nessuna regola in ingresso = blocca tutto
+  egress: []  # Nessuna regola in uscita = blocca tutto
+---
+apiVersion: cilium.io/v2
+kind: CiliumNetworkPolicy
+metadata:
+  name: aegis-network-policy
+  namespace: development
+spec:
+  # 1. Select the destination pods
+  endpointSelector:
+    matchLabels:
+      app: backend
+  # 2. Ingress rules (incoming traffic)
+  ingress:
+    # Allow traffic only from pods labeled "app:frontend"
+    - fromEndpoints:
+        - matchLabels:
+            app: frontend
+      toPorts:
+        - ports:
+            # Limit communication to port 8080 (TCP)
+            - port: '8080'
+              protocol: TCP
+          rules:
+            http:
+              # Layer 7 rule (HTTP): Allow only specific API
+              - method: GET
+                path: /api/v1/public

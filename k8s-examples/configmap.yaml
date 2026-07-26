@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: development
+data:
+  # Insert here your environment variables...
+  DATABASE_URL: "jdbc:mysql://db-service:3306/example"
+  LOG_LEVEL: "info"
+  COLOR: "red"
