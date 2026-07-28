@@ -3,13 +3,17 @@
 <div align="center">
   <img src="assets/logo.png" alt="Aegis Logo" width="100"/>
   <br>
-  <img src="assets/brands.png" alt="Aegis Logo" width="300"/>
+  <img src="assets/brands.png" alt="Brands" width="300"/>
 </div>
 
 This project is the result of a project work carried out in collaboration with [Fides Group](https://www.fidesgroup.com/it) and students from the **Cisco DTLab**.
 
 This repository serves a **demonstrative and educational** purpose. It contains the implementation of a secure and automated **DevSecOps** pipeline for validating, containerizing, and deploying cloud-native workloads on Kubernetes clusters.
 
+## 🔀 Flow
+<div align="center">
+  <img src="assets/pipeline.png" alt="The pipeline" width="700">
+</div>
 
 ## 🏗️ Architecture & Modules
 
@@ -55,6 +59,18 @@ The project covers the 3 required modules as follows:
 │   ├── network-policies.yaml    # Cilium Policies
 │   └── opa-policies/            # OPA Gatekeeper Policies
 └── README.md
+```
+
+## 💻 Implementation
+### Install ArgoCD
+```bash
+kubectl create namespace argocd &&
+kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
+```
+
+### Install OPA Gatekeeper
+```bash
+kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.23.0/deploy/gatekeeper.yaml
 ```
 
 ## 🔗 Demonstration
