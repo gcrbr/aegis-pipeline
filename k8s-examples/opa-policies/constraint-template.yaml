@@ -1,4 +1,6 @@
+# ====================================================================================================
 # Policy Enforcement: Defines a Gatekeeper template to detect and block privileged container execution
+# ====================================================================================================
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:

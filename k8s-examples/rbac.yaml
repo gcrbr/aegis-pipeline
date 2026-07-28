@@ -1,4 +1,6 @@
+# =================================================================================================
 # RBAC (Role-Based Access Control): Used to restrict permissions of single users inside a namespace
+# =================================================================================================
 # Creation of a role
 apiVersion: rbac.authorization.k8s.io/v1
 kind: Role

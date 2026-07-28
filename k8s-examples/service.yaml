@@ -1,4 +1,6 @@
+# ========================================================================================================
 # Service Configuration: Exposes the backend pods internally via a stable cluster-internal IP and DNS name
+# ========================================================================================================
 apiVersion: v1
 kind: Service
 metadata:

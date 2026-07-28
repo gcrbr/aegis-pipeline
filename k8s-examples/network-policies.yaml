@@ -1,4 +1,6 @@
+# ===================================
 # Network policies file, using Cilium
+# ===================================
 ---
 # Default deny policy. Before specific policies, we need to deny everything else.
 apiVersion: cilium.io/v2

@@ -1,6 +1,8 @@
+# ==========================================================================================================
 # Policy Activation: Instantiates the privileged container rule and applies it to specific cluster resources
 # This manifest acts as a binding. While the ConstraintTemplate defines the rule logic, 
 # this Constraint activates it by targeting Pods specifically in the development namespace.
+# ==========================================================================================================
 apiVersion: constraints.gatekeeper.sh/v1beta1
 kind: K8sPSPPrivilegedContainer # Must match the custom kind defined in your ConstraintTemplate
 metadata:
