@@ -73,6 +73,7 @@ You will need a functioning Kubernetes cluster to proceed.
 ### Repository Setup
 On your GitHub repository, you will have to:
 - Implement the `aegis.yaml` workflow by copying the file in your `.github/workflows` folder
+- Modify the workflow file to suit your needs and include the application layers
 - Insert your *Docker Hub* credentials in your *GitHub Secrets*
 
 ### GitOps Setup
