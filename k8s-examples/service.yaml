@@ -1,3 +1,4 @@
+# Service Configuration: Exposes the backend pods internally via a stable cluster-internal IP and DNS name
 apiVersion: v1
 kind: Service
 metadata:
@@ -5,9 +6,9 @@ metadata:
   namespace: development
 spec:
   selector:
-    app: backend
+    app: backend # Routes traffic to any Pod carrying the matching 'app: backend' label
   ports:
     - protocol: TCP
-      port: 80
-      targetPort: 8080
-  type: ClusterIP
+      port: 80 # The stable port exposed by the service inside the cluster network. The internal clients address to this port.
+      targetPort: 8080 # The actual port where the backend container application is listening. The traffic is forwarded from port 80 to this one
+  type: ClusterIP # Default service type: isolates the traffic to internal cluster communication only

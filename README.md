@@ -17,7 +17,7 @@ The project covers the 3 required modules as follows:
 
 ### Module 1: DevOps and Orchestration with Kubernetes
 - **Containerization**: The pipeline builds the image and pushes it to Docker Hub only if all security checks pass.
-- **K8s Manifests**: The `k8s-examples/` folder contains examples of a Deployment (with Probes and Resource Limits), Service, ConfigMap, PVC, Secret, and RBAC/ServiceAccount configurations to manage cluster privileges.
+- **K8s Manifests**: The `k8s-examples/` folder contains examples of a Deployment (with Probes and Resource Limits), Service, ConfigMap, PVC, Secret, RBAC/ServiceAccount configurations, and OPA Gatekeeper policies used to manage cluster privileges and enforce security compliance.
 - **GitOps CD**: Delegated to _Argo CD_ to visualize state, manage synchronizations, detect configuration drift, and easily handle rollbacks.
 
 ### Module 2: Cloud-Native Networking and Security with Cilium
@@ -26,16 +26,16 @@ The project covers the 3 required modules as follows:
 
 ### Module 3: DevSecOps and Observability
 - **Secure Pipeline**:
-  - `Trufflehog`: Secret scanning to prevent accidental commits of plaintext credentials.
-  - `Trivy`: Filesystem and dependency scanning, container image vulnerability scanning (OS and libraries), and formal security validation on Kubernetes YAML manifests.
+  - **Trufflehog**: Secret scanning to prevent accidental commits of plaintext credentials.
+  - **Trivy**: Filesystem and dependency scanning, container image vulnerability scanning (OS and libraries), and formal security validation on Kubernetes YAML manifests.
 - **In-Cluster Security (OPA Gatekeeper)**: Declarative rules in `k8s-examples/opa-policies` (ConstraintTemplates and Constraints) to validate resources during admission, preventing insecure instantiations such as privileged containers.
-- **Observability**: Configured in-cluster utilizing modern stacks (Prometheus/Grafana for workload metrics, Hubble/Cilium for network flow mapping and drop analysis).
+- **Observability**: Configured in-cluster utilizing Cilium and Hubble for deep network flow mapping, connectivity visualization, and packet drop analysis.
 
 ## 🛠️ Technology Stack
 - **CI Pipeline**: GitHub Actions
 - **Containerization**: Docker
-- **Security Scanning**: Aqua Trivy, TruffleHog
-- **Orchestration**: Kubernetes, Helm / Kustomize
+- **Security Scanning**: Trivy, TruffleHog
+- **Orchestration**: Kubernetes
 - **GitOps CD**: Argo CD
 - **Networking & CNI**: Cilium, Hubble
 - **Policy Engine**: OPA Gatekeeper
@@ -48,12 +48,12 @@ The project covers the 3 required modules as follows:
 │   └── workflows/
 │       └── aegis.yaml           # DevSecOps CI/CD Pipeline
 ├── k8s-examples/
-│   ├── deployment.yaml          # Secure workload example with probes & limits
+│   ├── deployment.yaml          # Secure workload example
 │   ├── service.yaml             # Service exposure
 │   ├── configmap.yaml / pvc.yaml / secret.yaml # Data & persistence management
 │   ├── rbac.yaml / serviceaccount.yaml         # In-cluster permissions
-│   ├── network-policies.yaml    # Cilium Policies (Default Deny & L7 traffic)
-│   └── opa-policies/            # OPA Gatekeeper Policies (e.g., no-privileged)
+│   ├── network-policies.yaml    # Cilium Policies
+│   └── opa-policies/            # OPA Gatekeeper Policies
 └── README.md
 ```
 

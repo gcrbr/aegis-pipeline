@@ -1,3 +1,4 @@
+# Deployment Configuration: Defines the state, resources, and scaling rules for the backend application
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -6,7 +7,8 @@ metadata:
   labels:
     app: backend
 spec:
-  replicas: 2
+  replicas: 1 # Number of identical Pods required
+  revisionHistoryLimit: 2 # Number of coexistent available replica sets. 2 => Older versions available so you can rollback
   selector:
     matchLabels:
       app: backend
@@ -15,34 +17,42 @@ spec:
       labels:
         app: backend
     spec:
-      serviceAccountName: aegis-sa
+      serviceAccountName: aegis-sa # Use the defined service account
+      automountServiceAccountToken: false # Prevents mounting of the default service account token
       securityContext:
-        runAsNonRoot: true
-        runAsUser: 1000
+        runAsNonRoot: true # Run the container without root privileges
+        runAsUser: 1000 # UID of the non-privileged user in the container 
       containers:
         - name: backend
-          image: docker.io/myorg/backend:latest
+          image: docker.io/myorg/backend:latest # Name and version of the container image
           ports:
             - containerPort: 8080
-          resources:
+          resources: # Required resources
             requests:
               cpu: "100m"
               memory: "128Mi"
             limits:
               cpu: "500m"
               memory: "512Mi"
-          livenessProbe:
+          livenessProbe: # Health checks
             httpGet:
-              path: /health
+              path: /health # Container answers to '/health' <=> Container is alive - If not => restart
               port: 8080
-            initialDelaySeconds: 5
-            periodSeconds: 10
+            initialDelaySeconds: 5 # Wait 5 seconds after starting before the first check
+            periodSeconds: 10 # Repeat check every 10 seconds
           readinessProbe:
             httpGet:
-              path: /ready
+              path: /ready # Container answers to '/ready' <=> Container is ready
               port: 8080
             initialDelaySeconds: 5
             periodSeconds: 10
-          envFrom:
+          envFrom: # Import and inject secrets from the secrets manifest file
             - secretRef:
                 name: backend-secret
+          volumeMounts: # Define where the external volumes should be mounted inside the container file system
+            - name: storage-volume # Must match the volume name defined below
+              mountPath: /app/data # Path inside the container where the 1Gi storage will be accessible
+      volumes: # Define the storage volumes available to the Pod
+        - name: storage-volume # Arbitrary name to link this volume to the container mount
+          persistentVolumeClaim:
+            claimName: aegis-example-pvc # References the 1Gi PersistentVolumeClaim defined earlier

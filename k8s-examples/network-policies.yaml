@@ -1,7 +1,6 @@
+# Network policies file, using Cilium
 ---
-# 0. Default Deny Policy
-# Questa policy seleziona tutti i pod nel namespace e blocca
-# di default qualsiasi traffico in ingresso e in uscita non esplicitamente autorizzato.
+# Default deny policy. Before specific policies, we need to deny everything else.
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:
@@ -9,10 +8,11 @@ metadata:
   namespace: development
 spec:
   endpointSelector:
-    matchLabels: {} # Seleziona tutti i pod
-  ingress: [] # Nessuna regola in ingresso = blocca tutto
-  egress: []  # Nessuna regola in uscita = blocca tutto
+    matchLabels: {} # Applies to all pods
+  ingress: [] # No ingress rules: Everything incoming is blocked
+  egress: []  #No egress rules: Everything outgoing is blocked
 ---
+# Policy that specifies allowed communications
 apiVersion: cilium.io/v2
 kind: CiliumNetworkPolicy
 metadata:

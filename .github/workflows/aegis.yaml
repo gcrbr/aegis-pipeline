@@ -25,15 +25,18 @@ jobs:
           # Example: Single application
           - name: application
             path: .
+            manifest: k8s/application.yaml
 
           #
           # Example: Multi-component application
           #
           # - name: app-frontend
           #   path: ./frontend
+          #   manifest: frontend.yaml
           #
           # - name: app-backend
           #   path: ./backend
+          #   manifest: backend.yaml
 
     steps:
       ############################################################
@@ -55,7 +58,7 @@ jobs:
       # Source Code and Dependency Scan
       ############################################################
       - name: 📁 Filesystem Security Scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: fs
           scan-ref: .
@@ -67,7 +70,7 @@ jobs:
       # Kubernetes Manifest Validation
       ############################################################
       - name: ☸️ Kubernetes Configuration Scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           scan-type: config
           scan-ref: .
@@ -102,7 +105,7 @@ jobs:
       # Container Image Security Scan
       ############################################################
       - name: 🐳 Container Image Security Scan
-        uses: aquasecurity/trivy-action@0.36.0
+        uses: aquasecurity/trivy-action@v0.36.0
         with:
           image-ref: ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}:${{ github.sha }}
           format: table
@@ -130,3 +133,22 @@ jobs:
 
           docker push \
           ${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}:latest
+
+      ############################################################
+      # Update K8s manifest with the exact SHA tag
+      ############################################################
+      - name: 📝 Update image tag in manifest
+        run: |
+          sed -i "s|${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}:.*|${{ secrets.DOCKER_USERNAME }}/${{ matrix.service.name }}:${{ github.sha }}|g" \
+            ${{ matrix.service.manifest }}
+
+      - name: 💾 Commit updated manifest
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add ${{ matrix.service.manifest }}
+          if ! git diff --cached --quiet; then
+            git commit -m "ci: update ${{ matrix.service.name }} image to ${{ github.sha }} [skip ci]"
+            git pull --rebase origin main
+            git push
+          fi

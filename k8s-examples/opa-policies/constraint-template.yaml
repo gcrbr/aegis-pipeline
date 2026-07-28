@@ -1,19 +1,26 @@
+# Policy Enforcement: Defines a Gatekeeper template to detect and block privileged container execution
 apiVersion: templates.gatekeeper.sh/v1
 kind: ConstraintTemplate
 metadata:
-  name: k8spspprivilegedcontainer
+  name: k8spspprivilegedcontainer # Global name of the template used to generate the validation rule
 spec:
   crd:
     spec:
       names:
-        kind: K8sPSPPrivilegedContainer
+        kind: K8sPSPPrivilegedContainer # Defines the custom resource kind that users will deploy to enforce this policy
   targets:
     - target: admission.k8s.gatekeeper.sh
-      rego: |
+      rego: | # Custom rule used for blocking privileged containers, written in Rego (a custom query language)
         package k8spspprivilegedcontainer
 
+        # Rule triggers a violation if any container runs in privileged mode
         violation[{"msg": msg, "details": {}}] {
+            # 1. Loop through every container defined in the submitted manifest
             c := input.review.object.spec.containers[_]
+            
+            # 2. Check if the 'privileged' flag is set to true in the security context
             c.securityContext.privileged
+            
+            # 3. If true, generate the custom rejection error message for the user
             msg := sprintf("Privileged container is not allowed: %v, securityContext: %v", [c.name, c.securityContext])
         }
