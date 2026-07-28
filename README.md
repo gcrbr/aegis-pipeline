@@ -62,16 +62,38 @@ The project covers the 3 required modules as follows:
 ```
 
 ## 💻 Implementation
-### Install ArgoCD
-```bash
-kubectl create namespace argocd &&
-kubectl apply -n argocd -f https://raw.githubusercontent.com/argoproj/argo-cd/stable/manifests/install.yaml
-```
 
-### Install OPA Gatekeeper
+### Cluster Setup
+You will need a functioning Kubernetes cluster to proceed.
+- Install ArgoCD ([instructions](https://argo-cd.readthedocs.io/en/stable/getting_started/#1-install-argo-cd))
+- Install OPA Gatekeeper ([instructions](https://open-policy-agent.github.io/gatekeeper/website/docs/install/#deploying-a-release-using-prebuilt-image))
+- Install Cilium ([instructions](https://docs.cilium.io/en/stable/gettingstarted/k8s-install-default/))
+- Instal Hubble ([instructions](https://docs.cilium.io/en/stable/observability/hubble/setup/))
+
+### Repository Setup
+On your GitHub repository, you will have to:
+- Implement the `aegis.yaml` workflow by copying the file in your `.github/workflows` folder
+- Insert your *Docker Hub* credentials in your *GitHub Secrets*
+
+### GitOps Setup
+Port-forward the ArgoCD GUI
 ```bash
-kubectl apply -f https://raw.githubusercontent.com/open-policy-agent/gatekeeper/v3.23.0/deploy/gatekeeper.yaml
+kubectl port-forward svc/argocd-server -n argocd 8080:443
 ```
+\
+Get the default password for the "*admin*" user
+```bash
+kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 -d; echo
+```
+\
+Browse to your `https://localhost:8080`, login with the default credentials and create your application in ArgoCD
+
+### Hubble Observability
+Port-forward the Hubble GUI
+```bash
+kubectl port-forward -n kube-system svc/hubble-ui 12000:80
+````
+And open your browser to `http://localhost:12000` to access the Hubble interface.
 
 ## 🔗 Demonstration
 This repository focuses on demonstrating the infrastructure and security configurations. The fully functional CI/CD pipeline, including the active **Argo CD** deployment, is implemented in a separate repository hosting a custom-built **3-tier mock application** (Frontend, Backend, Database) used as our live workload.
