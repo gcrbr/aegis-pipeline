@@ -11,9 +11,6 @@ on:
 permissions:
   contents: write
 
-env:
-  REGISTRY: docker.io
-
 jobs:
   security-and-build:
     name: 🔀 Security Scan, Build and Push
@@ -25,9 +22,8 @@ jobs:
           # Example: Single application
           - name: application
             path: .
-            manifest: k8s/application.yaml
+            manifest: k8s-examples/deployment.yaml
 
-          #
           # Example: Multi-component application
           #
           # - name: app-frontend
@@ -43,13 +39,13 @@ jobs:
       # Checkout
       ############################################################
       - name: ✅ Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       ############################################################
       # Secret Scanning
       ############################################################
       - name: 🔎 Secret Scanning
-        uses: trufflesecurity/trufflehog@main
+        uses: trufflesecurity/trufflehog@v3.96.0
         with:
           base: ""
           head: ${{ github.ref_name }}

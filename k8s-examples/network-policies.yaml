@@ -10,7 +10,7 @@ spec:
   endpointSelector:
     matchLabels: {} # Applies to all pods
   ingress: [] # No ingress rules: Everything incoming is blocked
-  egress: []  #No egress rules: Everything outgoing is blocked
+  egress: []  # No egress rules: Everything outgoing is blocked
 ---
 # Policy that specifies allowed communications
 apiVersion: cilium.io/v2
